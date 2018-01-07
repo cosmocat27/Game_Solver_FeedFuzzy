@@ -3,6 +3,9 @@
 Created on Sat Jan  6 18:06:44 2018
 
 @author: cosmo
+
+Simulate the Feed Fuzzy game n times given initial states, calculate winning
+percentages and uncertainties
 """
 
 from play_fuzzy import play_fuzzy
