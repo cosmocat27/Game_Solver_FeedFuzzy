@@ -25,11 +25,14 @@ class game_state:
         self.die_numbers = die_numbers
     
     def roll_dice(self):
-        color = self.die_colors[randrange(5)] # ignore wilds for now
+        color = self.die_colors[randrange(6)]
         number = self.die_numbers[randrange(6)]
         return color, number
     
     def remove_color(self, color, number, player = 0):
+        if color == 'W':
+            self.on_move = 3 - self.on_move
+            return False
         if player == 0:
             player = self.on_move
         if player == 1:
@@ -110,15 +113,22 @@ def play_fuzzy(p1_state, p2_state, on_move, die_colors, die_numbers):
         player = game.on_move
         # print("P{}: {} {}".format(player, color, number))
         
-        """
+        # implement strategy for Wilds
         if color == 'W':
             state = game.get_state(player)
-            max_number = max(state, key=lambda key=state[key])
+            reduce_state = dict(state)
             for c in state:
                 if state[c] == number:
                     color = c
                     break
-        """
+                elif state[c] < number:
+                    del reduce_state[c]
+            if color == 'W':
+                max_number = number
+                for c in reduce_state:
+                    if state[c] > max_number:
+                        max_number = state[c]
+                        color = c
         
         game.remove_color(color, number, player)
         # print("P{}: {}".format(player, game.get_state(player)))
@@ -140,6 +150,7 @@ if __name__ == '__main__':
     
     p1_state = {'O':3, 'Y':3, 'G':3, 'B':3, 'P':3}
     p2_state = {'O':3, 'Y':3, 'G':3, 'B':3, 'P':3}
+
     on_move = 1
     
     play_fuzzy(p1_state, p2_state, on_move, die_colors, die_numbers)
